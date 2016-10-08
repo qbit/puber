@@ -209,6 +209,7 @@ func handleRm(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
+	// TODO: Create a way to pass arguments to Init
 	store.Init()
 	be = backend.Backend(&store)
 }
