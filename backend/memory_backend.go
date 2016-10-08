@@ -13,7 +13,6 @@ type MemStore struct {
 func (m *MemStore) Init() {
 	log.Println(m.Data)
 	m.Data = make(map[string][]string)
-	m.Data["god"] = append(m.Data["god"], "snakes")
 }
 
 // Add inserts a key into the backend
