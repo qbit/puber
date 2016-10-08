@@ -66,9 +66,7 @@ func handleAll(w http.ResponseWriter, r *http.Request) {
 
 	var data string
 	for i := range keys {
-		for j := range keys[i] {
-			data += keys[i][j] + "\n"
-		}
+		data += keys[i] + "\n"
 	}
 
 	fmt.Fprintf(w, data)
@@ -210,7 +208,10 @@ func handleRm(w http.ResponseWriter, r *http.Request) {
 
 func init() {
 	// TODO: Create a way to pass arguments to Init
-	store.Init()
+	err := store.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 	be = backend.Backend(&store)
 }
 
@@ -257,6 +258,8 @@ func main() {
 			rmWL.Add(net.ParseIP(ip[i]))
 		}
 	}
+
+	defer be.Close()
 
 	http.HandleFunc("/", handleIdx)
 	http.HandleFunc("/all", handleAll)
