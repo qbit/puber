@@ -1,5 +1,9 @@
 package backend
 
+import (
+	"errors"
+)
+
 // MemStore is a key value store in memory.
 type MemStore struct {
 	Data map[string][]string
@@ -23,11 +27,15 @@ func (m *MemStore) Add(user string, key string) (bool, error) {
 
 // RM removes a key from the backend
 func (m *MemStore) RM(user string, key string) (bool, error) {
-	var idx int
+	var idx = -1
 	for i := 0; i < len(m.Data[user]); i++ {
 		if m.Data[user][i] == key {
 			idx = i
 		}
+	}
+
+	if idx == -1 {
+		return false, errors.New("No key found!")
 	}
 
 	m.Data[user] = append(m.Data[user][:idx], m.Data[user][idx+1:]...)
