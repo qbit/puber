@@ -8,4 +8,5 @@ type Backend interface {
 	Get(string) ([]string, error)
 	GetAll() (map[string][]string, error)
 	GetCount() (int, error)
+	Init()
 }
