@@ -29,7 +29,6 @@ var yubiSKey string
 var yubiCID string
 var err error
 var debug bool
-var store = backend.MemStore{}
 var be backend.Backend
 
 func auth(ykey string) (*yubigo.YubiResponse, bool, error) {
@@ -206,15 +205,6 @@ func handleRm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func init() {
-	// TODO: Create a way to pass arguments to Init
-	err := store.Init()
-	if err != nil {
-		log.Fatal(err)
-	}
-	be = backend.Backend(&store)
-}
-
 func main() {
 	addWL := whitelist.NewBasic()
 	rmWL := whitelist.NewBasic()
@@ -230,13 +220,32 @@ func main() {
 
 	listen := flag.String("listen", ":8081", "listen string")
 	whiteList := flag.String("wl", "localhost", "comma seperated list of hosts to allow access to /add")
+	beStore := flag.String("store", "memory", "Where to store the public keys. [memory, redis]")
 
 	flag.StringVar(&yubiServer, "yserver", "api.yubico.com/wsapi/2.0/verify", "YubiAuth server to authenticate against")
 	flag.StringVar(&yubiSKey, "yskey", "", "Yubi API Key")
 	flag.StringVar(&yubiCID, "ycid", "", "Yubi Client ID")
+
 	flag.BoolVar(&debug, "debug", false, "Enable debugging")
 
 	flag.Parse()
+
+	switch *beStore {
+	case "memory":
+		store := backend.MemStore{}
+		be = backend.Backend(&store)
+	case "redis":
+		store := backend.RedisStore{}
+		be = backend.Backend(&store)
+	default:
+		store := backend.MemStore{}
+		be = backend.Backend(&store)
+	}
+
+	err = be.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if debug {
 		be.Add("debug", "debug key")
