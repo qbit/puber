@@ -6,8 +6,13 @@ type MemStore struct {
 }
 
 // Init initializes the data store
-func (m *MemStore) Init() {
+func (m *MemStore) Init() error {
 	m.Data = make(map[string][]string)
+	return nil
+}
+
+// Close "closes" the store.. really we don't do anything because RAM IS CHEAP, RIGHT?!
+func (m *MemStore) Close() {
 }
 
 // Add inserts a key into the backend
@@ -42,8 +47,14 @@ func (m *MemStore) Get(user string) ([]string, error) {
 }
 
 // GetAll returns the entire datastructure
-func (m *MemStore) GetAll() (map[string][]string, error) {
-	return m.Data, nil
+func (m *MemStore) GetAll() ([]string, error) {
+	var s []string
+	for i := range m.Data {
+		for j := range m.Data[i] {
+			s = append(s, m.Data[i][j])
+		}
+	}
+	return s, nil
 }
 
 // GetKeyCount queries the number of keys a given user has
