@@ -1,9 +1,5 @@
 package backend
 
-import (
-	"log"
-)
-
 // MemStore is a key value store in memory.
 type MemStore struct {
 	Data map[string][]string
@@ -11,13 +7,11 @@ type MemStore struct {
 
 // Init initializes the data store
 func (m *MemStore) Init() {
-	log.Println(m.Data)
 	m.Data = make(map[string][]string)
 }
 
 // Add inserts a key into the backend
 func (m *MemStore) Add(user string, key string) (bool, error) {
-	log.Println(m.Data[user])
 	m.Data[user] = append(m.Data[user], key)
 	return true, nil
 }
