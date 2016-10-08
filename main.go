@@ -31,6 +31,7 @@ var yubiServer string
 var yubiSKey string
 var yubiCID string
 var err error
+var debug bool
 var store = backend.MemStore{}
 var be backend.Backend
 
@@ -67,8 +68,7 @@ func handleAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data string
-	for i, un := range keys {
-		fmt.Println(un)
+	for i := range keys {
 		for j := range keys[i] {
 			data += keys[i][j] + "\n"
 		}
@@ -101,7 +101,6 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 		for i := range users {
 			d, err = be.Get(users[i])
 			if err != nil {
-
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
@@ -162,7 +161,9 @@ func handleAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(result.GetRequestQuery())
+	if debug {
+		log.Println(result.GetRequestQuery())
+	}
 
 	if ok {
 		be.Add(data.User, data.PubKey)
@@ -189,12 +190,21 @@ func handleRm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ok {
-		_, err := be.RMAll(data.User)
-		if err != nil {
-			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		if data.PubKey != "" {
+			_, err := be.RM(data.User, data.PubKey)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			fmt.Fprintf(w, fmt.Sprintf("Removed '%s' from '%s'\n", data.PubKey, data.User))
+		} else {
+			_, err := be.RMAll(data.User)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			fmt.Fprintf(w, "Removed\n")
 		}
-		fmt.Fprintf(w, "Removed\n")
 	} else {
 		log.Println("Auth Failed!")
 		http.Error(w, "Auth Failed!", http.StatusUnauthorized)
@@ -227,7 +237,15 @@ func main() {
 	flag.StringVar(&yubiSKey, "yskey", "", "Yubi API Key")
 	flag.StringVar(&yubiCID, "ycid", "", "Yubi Client ID")
 
+	flag.BoolVar(&debug, "debug", false, "Enable debugging")
+
 	flag.Parse()
+
+	if debug {
+		be.Add("debug", "debug key")
+		be.Add("debug", "debug key two")
+		be.Add("debug", "debug key three")
+	}
 
 	for _, host := range strings.Split(*whiteList, ",") {
 		ip, err := net.LookupHost(host)
