@@ -106,7 +106,10 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 
-			data += strings.Join(d, "\n")
+			for j := range d {
+				data += d[j] + "\n"
+			}
+
 		}
 	} else {
 		var d []string
