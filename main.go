@@ -113,7 +113,6 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		data += strings.Join(d, "\n")
-
 	}
 	fmt.Fprintf(w, data)
 }
