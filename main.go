@@ -24,9 +24,6 @@ type puberReq struct {
 	YKey   string `json:"yKey"`
 }
 
-var listen string
-var redisServer string
-var prefix string
 var yubiServer string
 var yubiSKey string
 var yubiCID string
@@ -229,14 +226,12 @@ func main() {
 		log.Fatalf("%v", err)
 	}
 
-	flag.StringVar(&listen, "listen", ":8081", "listen string")
+	listen := flag.String("listen", ":8081", "listen string")
 	whiteList := flag.String("wl", "localhost", "comma seperated list of hosts to allow access to /add")
-	flag.StringVar(&redisServer, "redishost", "localhost:6379", "redis server")
-	flag.StringVar(&prefix, "prefix", "puber", "prefix to store redis keys with")
+
 	flag.StringVar(&yubiServer, "yserver", "api.yubico.com/wsapi/2.0/verify", "YubiAuth server to authenticate against")
 	flag.StringVar(&yubiSKey, "yskey", "", "Yubi API Key")
 	flag.StringVar(&yubiCID, "ycid", "", "Yubi Client ID")
-
 	flag.BoolVar(&debug, "debug", false, "Enable debugging")
 
 	flag.Parse()
@@ -268,6 +263,6 @@ func main() {
 	http.Handle("/add", wlAddHandler)
 	http.Handle("/rm", wlRMHandler)
 
-	log.Printf("Listening on '%s'\n", listen)
-	log.Fatal(http.ListenAndServe(listen, nil))
+	log.Printf("Listening on '%s'\n", *listen)
+	log.Fatal(http.ListenAndServe(*listen, nil))
 }
