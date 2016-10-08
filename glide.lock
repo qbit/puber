@@ -1,0 +1,10 @@
+hash: 2884be7345c5a5de09f7b5a24ede4b5d2952521ceff341c14335d3fa5a359048
+updated: 2016-10-06T12:42:14.784281845-06:00
+imports:
+- name: github.com/boltdb/bolt
+  version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+- name: github.com/GeertJohan/yubigo
+  version: b1764f04aa9ba3c98a15084e7e13c1a69753e1da
+- name: github.com/kisom/whitelist
+  version: e745c3c6025789a5753eedcc0445a564586d15ed
+testImports: []
