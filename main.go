@@ -15,7 +15,7 @@ import (
 
 	"github.com/GeertJohan/yubigo"
 	"github.com/kisom/whitelist"
-	"github.com/qbit/puber/backend"
+	"code.bolddaemon.com/qbit/puber/backend"
 )
 
 type puberReq struct {
