@@ -94,7 +94,6 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(r.URL.Path)
 	parts := strings.Split(u.String(), "/")
 	user := parts[len(parts)-1]
 
