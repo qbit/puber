@@ -86,6 +86,7 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	fmt.Println(r.URL.Path)
@@ -98,6 +99,7 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	var data string
@@ -110,6 +112,7 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 			}
 
 			for j := range d {
@@ -125,6 +128,7 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		dbg("Got '%s' for '%s'", d, user)
 		data += strings.Join(d, "\n")
 	}
 	fmt.Fprintf(w, data)
