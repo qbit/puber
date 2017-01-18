@@ -80,7 +80,7 @@ func handleAll(w http.ResponseWriter, r *http.Request) {
 
 	var data string
 	for i := range keys {
-		data += keys[i] + "\n"
+		data += anonKey(keys[i]) + "\n"
 	}
 
 	fmt.Fprintf(w, data)
