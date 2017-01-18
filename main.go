@@ -10,12 +10,13 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 
+	"code.bolddaemon.com/qbit/puber/backend"
 	"github.com/GeertJohan/yubigo"
 	"github.com/kisom/whitelist"
-	"code.bolddaemon.com/qbit/puber/backend"
 )
 
 type puberReq struct {
@@ -31,8 +32,15 @@ var err error
 var debug bool
 var be backend.Backend
 
+func dbg(format string, a ...interface{}) {
+	if debug {
+		fmt.Fprintf(os.Stdout, format, a...)
+	}
+}
+
 func auth(ykey string) (*yubigo.YubiResponse, bool, error) {
 	yubiAuth, err := yubigo.NewYubiAuth(yubiCID, yubiSKey)
+
 	if yubiServer != "" {
 		log.Printf("using '%s'", yubiServer)
 		yubiAuth.SetApiServerList(yubiServer)
@@ -40,6 +48,8 @@ func auth(ykey string) (*yubigo.YubiResponse, bool, error) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	dbg("Sending '%s' to '%s'\n", ykey, yubiServer)
 
 	return yubiAuth.Verify(ykey)
 }
@@ -51,7 +61,7 @@ func handleIdx(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	dbg("loading index\n")
 	fmt.Fprintf(w, "I currently have %d key(s)", data)
 }
 
@@ -78,8 +88,11 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
+	fmt.Println(r.URL.Path)
 	parts := strings.Split(u.String(), "/")
 	user := parts[len(parts)-1]
+
+	dbg("Loading data for '%s' (%s)\n", user, r.URL.Path)
 
 	match, err := regexp.Match(",", []byte(user))
 	if err != nil {
