@@ -30,18 +30,6 @@ func readUser(m string) string {
 	return strings.Trim(text, "\n")
 }
 
-func getYKey() string {
-	return readUser("Press your yubikey: ")
-}
-
-func getUser() string {
-	return readUser("Enter the user to associate pubkey with: ")
-}
-
-func getPubKey() string {
-	return readUser("Enter the pubkey: ")
-}
-
 func request(c goconfig.ConfigMap, r *puberReq) {
 	server := c["server"]["url"] + "/" + r.kind
 
@@ -112,9 +100,9 @@ func main() {
 
 	}
 
-	r.User = getUser()
-	r.PubKey = getPubKey()
-	r.YKey = getYKey()
+	r.User = readUser("Enter the user to associate pubkey with: ")
+	r.PubKey = readUser("Enter the pubkey: ")
+	r.YKey = readUser("Press your yubikey: ")
 
 	request(conf, r)
 }
