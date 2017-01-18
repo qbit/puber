@@ -81,6 +81,7 @@ seperated list:
 
 ## TODO
 
+* [ ] Fix WhteList stuff for reverse proxy.
 * [ ] Make yubikey auth optional.
 * [ ] Allow for arbitrary yubi client id and API keys to be used.
 * [ ] Add a BoltDB backend.
