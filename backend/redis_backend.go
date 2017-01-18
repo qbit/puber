@@ -61,7 +61,7 @@ func (r *RedisStore) RMAll(user string) (bool, error) {
 
 // Get returns all keys for user
 func (r *RedisStore) Get(user string) ([]string, error) {
-	keys, err := r.client.Cmd("lrange", user, 0, 1).List()
+	keys, err := r.client.Cmd("lrange", r.KV(user), 0, 1).List()
 	if err != nil {
 		return nil, err
 	}
