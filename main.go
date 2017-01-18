@@ -25,6 +25,11 @@ type puberReq struct {
 	YKey   string `json:"yKey"`
 }
 
+func anonKey(s string) string {
+	parts := strings.Split(s, " ")
+	return parts[0] + " " + parts[1]
+}
+
 var yubiServer string
 var yubiSKey string
 var yubiCID string
@@ -116,17 +121,20 @@ func handleUser(w http.ResponseWriter, r *http.Request) {
 			}
 
 			for j := range d {
-				data += d[j] + "\n"
+				data += anonKey(d[j]) + "\n"
 			}
 
 		}
 	} else {
-		var d []string
-		d, err = be.Get(user)
+		d, err := be.Get(user)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
+		}
+		dbg("Got '%s' for '%s'", d, user)
+		for i := range d {
+			d[i] = anonKey(d[i])
 		}
 		dbg("Got '%s' for '%s'", d, user)
 		data += strings.Join(d, "\n")
